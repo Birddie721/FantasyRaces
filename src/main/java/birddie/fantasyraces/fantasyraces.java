@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
 
-@Mod(modid = fantasyraces.MODID, name = fantasyraces.NAME, version = fantasyraces.VERSION)
+@Mod(modid = fantasyraces.MODID, name = fantasyraces.NAME, version = fantasyraces.VERSION, acceptedMinecraftVersions = "[1.12.2]")
 
 public class fantasyraces
 {

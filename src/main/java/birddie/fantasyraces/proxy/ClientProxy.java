@@ -1,7 +1,6 @@
 package birddie.fantasyraces.proxy;
 
 import birddie.fantasyraces.handlers.RegistryHandler;
-import birddie.fantasyraces.handlers.RenderHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.IThreadListener;
@@ -18,7 +17,6 @@ public class ClientProxy extends CommonProxy{
     {
 		super.preInit(event);
 		RegistryHandler.Client();
-		RenderHandler.registerEntityRenders();
     }
 
     @EventHandler
