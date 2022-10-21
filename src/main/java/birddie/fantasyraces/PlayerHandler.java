@@ -19,14 +19,14 @@ public class PlayerHandler{
 	
 	@SubscribeEvent
 	public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-		//loadPlayerData(event.player);
+		int race = loadPlayerData(event.player);
 		IRace p = event.player.getCapability(RaceProvider.RACE, null);
-		p.setRace(-1);
+		p.setRace(race);
 	}
 	
 	@SubscribeEvent
 	public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-		//savePlayerData(event.player);
+		savePlayerData(event.player);
 	}
 	
 	
@@ -45,7 +45,7 @@ public class PlayerHandler{
 		
 	}
 	
-	public void loadPlayerData(EntityPlayer player) {
+	public int loadPlayerData(EntityPlayer player) {
 		//serverside
 		IRace p = player.getCapability(RaceProvider.RACE, null);
 		World world = player.world;
@@ -57,10 +57,12 @@ public class PlayerHandler{
 				CommonProxy.NETWORK_TO_CLIENT.sendTo(new RaceMessage(p), (EntityPlayerMP) player);
 			}catch(IOException e){
 				System.out.println("Error reading player data file.");
+				p.setRace(-1);
 			}
 		}else {
 			RaceChanger.nonRaced(player);
 		}
+		return p.getRace();
 	}
 	
 }

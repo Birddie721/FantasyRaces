@@ -27,36 +27,25 @@ public class HeightChanger {
 			IRace p = player.getCapability(RaceProvider.RACE, null);
 			
 			switch(p.getRace()) {
-			case 0: //player.width = 0.6f;
-					//player.height = 1.8f;
-					height = 0.0f;
+			case 0: height = 0.0f;
 					width = 0.0f;
 					break;
-			case 1: //player.width = 0.7f;
-					//player.height = 1.4f;
-					height = -0.2f;
+			case 1: height = -0.2f;
 					width = 0.0f;
 					break;
-			case 2: //player.width = 0.6f;
-					//player.height = 1.9f;
-					height = 0.1f;
+			case 2: height = 0.1f;
 					width = 0.0f;
 					break;
-			case 3: //player.width = 0.3f;
-					//player.height = 0.9f;
-					height = -0.5f;
+			case 3: height = -0.5f;
 					width = -0.5f;
 					break;
-		}
-			//player.eyeHeight = player.height * EYE_POS;
-			//double d0 = (double)player.width/2.0;
-			//player.setEntityBoundingBox(new AxisAlignedBB(player.posX - d0, player.posY, player.posZ - d0, player.posX + d0, player.posY + player.height, player.posZ + d0));
-				AttributeModifier heightMod = new AttributeModifier(heightUUID, "HEIGHT", height, 0);
-				AttributeModifier widthMod = new AttributeModifier(widthUUID, "HEIGHT", width, 0);
-				player.getEntityAttribute(ArtemisLibAttributes.ENTITY_HEIGHT).removeModifier(heightUUID);
-				player.getEntityAttribute(ArtemisLibAttributes.ENTITY_WIDTH).removeModifier(widthUUID);
-				player.getEntityAttribute(ArtemisLibAttributes.ENTITY_HEIGHT).applyModifier(heightMod);
-				player.getEntityAttribute(ArtemisLibAttributes.ENTITY_WIDTH).applyModifier(widthMod);
+			}
+			AttributeModifier heightMod = new AttributeModifier(heightUUID, "HEIGHT", height, 0);
+			AttributeModifier widthMod = new AttributeModifier(widthUUID, "HEIGHT", width, 0);
+			player.getEntityAttribute(ArtemisLibAttributes.ENTITY_HEIGHT).removeModifier(heightUUID);
+			player.getEntityAttribute(ArtemisLibAttributes.ENTITY_WIDTH).removeModifier(widthUUID);
+			player.getEntityAttribute(ArtemisLibAttributes.ENTITY_HEIGHT).applyModifier(heightMod);
+			player.getEntityAttribute(ArtemisLibAttributes.ENTITY_WIDTH).applyModifier(widthMod);
 
 		}
 		
