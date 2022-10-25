@@ -65,7 +65,7 @@ public class FantasyGUI extends GuiScreen{
 			p.setRace(3);
 			this.player.closeScreen();
 		}
-		CommonProxy.NETWORK_TO_SERVER.sendToServer(new RaceMessage(p));;
+		CommonProxy.NETWORK_TO_SERVER.sendToServer(new RaceMessage(p));
 	}
 	
 	@Override

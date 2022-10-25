@@ -6,6 +6,9 @@ import birddie.fantasyraces.proxy.CommonProxy;
 import birddie.fantasyraces.race.IRace;
 import birddie.fantasyraces.race.RaceMessage;
 import birddie.fantasyraces.race.RaceProvider;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.potion.Potion;
@@ -27,9 +30,10 @@ public class RaceChanger {
 	
 	double dodgeChance = .4;
 	boolean dodged = false;
-
+	
 	
 	public static void nonRaced(EntityPlayer player) {
+		System.out.println(player.getName() + "is NONRACED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + player.getName());
 		IRace p = player.getCapability(RaceProvider.RACE, null);
 		p.setRace(-1);
 		CommonProxy.NETWORK_TO_CLIENT.sendTo(new RaceMessage(p), (EntityPlayerMP) player);
@@ -119,6 +123,9 @@ public class RaceChanger {
 		IRace p = event.player.getCapability(RaceProvider.RACE, null);
 		if((event.player instanceof EntityPlayerMP)) {	
 			//System.out.println(event.player.getName() + " serverside race: " + p.getRace());
+			
+			//Sloppy fix, but works for now
+			//CommonProxy.NETWORK_TO_CLIENT.sendTo(new RaceMessage(p), (EntityPlayerMP) event.player);
 		}else {
 			//System.out.println(event.player.getName() + " clientside race: " + p.getRace());
 		}
@@ -126,7 +133,6 @@ public class RaceChanger {
 		if(!(event.player instanceof EntityPlayerMP)) {	
 			if(p.getRace() == -1) {
 				openGUI(event.player);
-				System.out.println("Opened GUI for " + event.player.getName());
 			}else {
 				//event.player.closeScreen();
 			}
@@ -139,27 +145,54 @@ public class RaceChanger {
 						event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(16), 420));
 					}else if(p.getRace() ==2){event.player.removePotionEffect(Potion.getPotionById(16));}
 					if(p.getRace() == 0) {
-						event.player.capabilities.setPlayerWalkSpeed(0.1f);
+						//event.player.capabilities.setPlayerWalkSpeed(0.1f);
 					}
 					if(p.getRace() == 1) {
 						event.player.removePotionEffect(Potion.getPotionById(19));
-						event.player.capabilities.setPlayerWalkSpeed(0.08f);
+						//event.player.capabilities.setPlayerWalkSpeed(0.08f);
 					}
 					if(p.getRace() == 2) {
-						event.player.capabilities.setPlayerWalkSpeed(0.12f);
+						//event.player.capabilities.setPlayerWalkSpeed(0.12f);
 					}
 					if(p.getRace() == 3) {
 						event.player.removePotionEffect(Potion.getPotionById(20));
 						event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(26), 20));
-						event.player.capabilities.setPlayerWalkSpeed(0.08f);
+						//event.player.capabilities.setPlayerWalkSpeed(0.08f);
 					}else {event.player.removePotionEffect(Potion.getPotionById(26));}
 				}
 			}	
+		}else {
+			if(event.player != null){			
+				if(event.player.getEntityWorld().playerEntities.contains(event.player)) {
+					if(event.player.posY < 60 && p.getRace() == 1) {
+						event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(16), 420));
+					}else if(p.getRace() == 1){event.player.removePotionEffect(Potion.getPotionById(16));}
+					if(event.player.posY > 60 && p.getRace() == 2) {
+						event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(16), 420));
+					}else if(p.getRace() ==2){event.player.removePotionEffect(Potion.getPotionById(16));}
+					if(p.getRace() == 0) {
+					}
+					if(p.getRace() == 1) {
+						event.player.removePotionEffect(Potion.getPotionById(19));
+					}
+					if(p.getRace() == 2) {
+					}
+					if(p.getRace() == 3) {
+						event.player.removePotionEffect(Potion.getPotionById(20));
+						event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(26), 20));
+					}else {event.player.removePotionEffect(Potion.getPotionById(26));}
+				}
+			}
 		}
 	}
 	
 	public void openGUI(EntityPlayer player) {
+		if(player != Minecraft.getMinecraft().player) {return;}
+		//System.out.println("Opening GUI for " + player.getName());
 		player.openGui(fantasyraces.instance, 0, player.world, (int) player.posX, (int) player.posY, (int) player.posZ);
+		IRace p = player.getCapability(RaceProvider.RACE, null);
+		p.setRace(0);
+		p.setRace(-2);
 	}
 	
 	//Dwarfs break blocks under Y=60 faster
