@@ -33,7 +33,7 @@ public class RaceChanger {
 	
 	
 	public static void nonRaced(EntityPlayer player) {
-		System.out.println(player.getName() + "is NONRACED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + player.getName());
+		//System.out.println(player.getName() + "is NONRACED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + player.getName());
 		IRace p = player.getCapability(RaceProvider.RACE, null);
 		p.setRace(-1);
 		CommonProxy.NETWORK_TO_CLIENT.sendTo(new RaceMessage(p), (EntityPlayerMP) player);
@@ -91,7 +91,7 @@ public class RaceChanger {
 			  IRace p = source.getTrueSource().getCapability(RaceProvider.RACE, null);
 			  if(p.getRace() == 2) {
 				  if (source.isProjectile()) {
-					  event.setAmount(event.getAmount() * 1.5f);
+					  event.setAmount(event.getAmount() * 1.25f);
 				  }
 			  }
 		  }
@@ -139,11 +139,15 @@ public class RaceChanger {
 			if(event.player != null && !(event.player instanceof EntityPlayerMP)){			
 				if(event.player.getEntityWorld().playerEntities.contains(event.player)) {
 					if(event.player.posY < 60 && p.getRace() == 1) {
-						event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(16), 420));
-					}else if(p.getRace() == 1){event.player.removePotionEffect(Potion.getPotionById(16));}
+						if(event.player.dimension == 0) {
+							event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(16), 210));
+						}
+					}
 					if(event.player.posY > 60 && p.getRace() == 2) {
-						event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(16), 420));
-					}else if(p.getRace() ==2){event.player.removePotionEffect(Potion.getPotionById(16));}
+						if(event.player.dimension == 0) {
+							event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(16), 210));
+						}
+					}
 					if(p.getRace() == 0) {
 						//event.player.capabilities.setPlayerWalkSpeed(0.1f);
 					}
@@ -158,18 +162,22 @@ public class RaceChanger {
 						event.player.removePotionEffect(Potion.getPotionById(20));
 						event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(26), 20));
 						//event.player.capabilities.setPlayerWalkSpeed(0.08f);
-					}else {event.player.removePotionEffect(Potion.getPotionById(26));}
+					}
 				}
 			}	
 		}else {
 			if(event.player != null){			
 				if(event.player.getEntityWorld().playerEntities.contains(event.player)) {
 					if(event.player.posY < 60 && p.getRace() == 1) {
-						event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(16), 420));
-					}else if(p.getRace() == 1){event.player.removePotionEffect(Potion.getPotionById(16));}
+						if(event.player.dimension == 0) {
+							event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(16), 210));
+						}
+					}
 					if(event.player.posY > 60 && p.getRace() == 2) {
-						event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(16), 420));
-					}else if(p.getRace() ==2){event.player.removePotionEffect(Potion.getPotionById(16));}
+						if(event.player.dimension == 0) {
+							event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(16), 210));
+						}
+					}
 					if(p.getRace() == 0) {
 					}
 					if(p.getRace() == 1) {
@@ -180,7 +188,7 @@ public class RaceChanger {
 					if(p.getRace() == 3) {
 						event.player.removePotionEffect(Potion.getPotionById(20));
 						event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(26), 20));
-					}else {event.player.removePotionEffect(Potion.getPotionById(26));}
+					}
 				}
 			}
 		}
@@ -202,10 +210,13 @@ public class RaceChanger {
 		if(!(event.getEntityLiving() instanceof EntityPlayer)) {
 			return;
 		}
+		if(event.getEntityLiving().dimension != 0) {
+			return;
+		}
 		IRace p = event.getEntityLiving().getCapability(RaceProvider.RACE, null);
 		EntityPlayer player = event.getEntityPlayer();
 		if(p.getRace() == 1 && player.posY < 60 ) {
-			event.setNewSpeed(event.getOriginalSpeed() * 1.7F);
+			event.setNewSpeed((float) (event.getOriginalSpeed() * (1.7F + ((60 - player.posY)/50))));
 		}
 		if(p.getRace() == 2 && player.posY < 60 ) {
 			event.setNewSpeed(event.getOriginalSpeed() * 0.8F);
