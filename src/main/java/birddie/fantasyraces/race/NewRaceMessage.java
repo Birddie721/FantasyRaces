@@ -1,24 +1,23 @@
 package birddie.fantasyraces.race;
 
-import java.util.UUID;
-
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
-public class RaceMessage implements IMessage{
+public class NewRaceMessage implements IMessage{
 
 	private IRace race;
 	private EntityPlayer player;
 	
-	public RaceMessage() {
+	public NewRaceMessage() {
 		this.race = null;
+		this.player = null;
 	}
 	
-	public RaceMessage(IRace race, EntityPlayer player) {
+	
+	public NewRaceMessage(IRace race) {
 		this.race = race;
-		this.player = player;
+		this.player = null;
 	}
 	
 	
@@ -30,7 +29,6 @@ public class RaceMessage implements IMessage{
 			this.race = new Race();
 			this.race.setRace(buf.readInt());
 		}
-		this.player = (Minecraft.getMinecraft().world.getPlayerEntityByUUID(new UUID(buf.readLong(), buf.readLong())));
 		
 	}
 
@@ -39,10 +37,6 @@ public class RaceMessage implements IMessage{
 		if(this.race !=null) {
 			buf.writeInt(this.race.getRace());
 		}	
-		if(this.player != null) {
-			buf.writeLong(this.player.getPersistentID().getMostSignificantBits());
-			buf.writeLong(this.player.getPersistentID().getLeastSignificantBits());
-		}
 
 	}
 	
@@ -54,8 +48,4 @@ public class RaceMessage implements IMessage{
 		return this.race;
 	}
 	
-	public EntityPlayer getPlayer() {
-		return this.player;
-	}
-
 }

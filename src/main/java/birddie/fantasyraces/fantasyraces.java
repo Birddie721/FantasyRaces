@@ -1,7 +1,7 @@
 package birddie.fantasyraces;
 
 import birddie.fantasyraces.proxy.CommonProxy;
-
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -17,7 +17,7 @@ public class fantasyraces
 {
     public static final String MODID = "fantasyraces";
     public static final String NAME = "Birddie's Fantasy Races";
-    public static final String VERSION = "beta-0.2";
+    public static final String VERSION = "1.0";
     
     public static final String CLIENTPROXY = "birddie.fantasyraces.proxy.ClientProxy";
     public static final String COMMONPROXY = "birddie.fantasyraces.proxy.CommonProxy";
@@ -28,11 +28,16 @@ public class fantasyraces
     @SidedProxy(clientSide = CLIENTPROXY, serverSide = COMMONPROXY)
     public static CommonProxy proxy;
     
+    public static Configuration Config;
+    
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
+    	Config = new Configuration(event.getSuggestedConfigurationFile());
+    	birddie.fantasyraces.proxy.Config.syncConfig(Config);
     	event.getModMetadata().version = VERSION;
     	proxy.preInit(event);
+    	//UpdateChecker
     }
 
     @EventHandler

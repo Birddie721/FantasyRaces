@@ -17,24 +17,29 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
+/*
+ * Playable Fantasy Races
+ * 
+ * This class saves and loads the race data to keep player selected race persistent between logins
+ * 
+ */
+
 public class PlayerHandler{
 	
 	@SubscribeEvent
 	public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-		//loadPlayerData(event.player);
-		IRace p = event.player.getCapability(RaceProvider.RACE, null);
-		CommonProxy.NETWORK_TO_CLIENT.sendTo(new RaceMessage(p), (EntityPlayerMP) event.player);
+		loadPlayerData(event.player);
 	}
 	
 
 	
 	@SubscribeEvent
 	public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-		//savePlayerData(event.player);
+		savePlayerData(event.player);
 	}
 	
 	
-/*No longer used
+
 	public void savePlayerData(EntityPlayer player) {
 		IRace p = player.getCapability(RaceProvider.RACE, null);
 		World world = player.world;
@@ -45,6 +50,7 @@ public class PlayerHandler{
 		try {
 			Files.touch(playerDataFile);
 			playerDataFile.createNewFile();
+			CompressedStreamTools.write(tag, playerDataFile);
 		}catch(IOException e) {
 			System.out.println("Error writing player data." + e);
 		}
@@ -54,7 +60,6 @@ public class PlayerHandler{
 	public void loadPlayerData(EntityPlayer player) {
 		//serverside
 		IRace p = player.getCapability(RaceProvider.RACE, null);
-		System.out.println("PLAYER LOGGED IN, LOAD DATA as race " + p.getRace());
 		World world = player.world;
 		File playerDataFile = new File("FantasyRaces/fantasyrace-" + String.valueOf(player.getUniqueID()) + String.valueOf(world.getSeed()));
 		if(player != null && playerDataFile.exists()) {
@@ -63,12 +68,12 @@ public class PlayerHandler{
 				p.setRace(tag.getInteger("Race"));
 			}catch(IOException e){
 				System.out.println("Error reading player data file. " + e);
-				//RaceChanger.nonRaced(player);
+				p.setRace(-1);
 			}
 		}else {
-			RaceChanger.nonRaced(player);
+			p.setRace(-1);
 		}
-		CommonProxy.NETWORK_TO_CLIENT.sendTo(new RaceMessage(p), (EntityPlayerMP) player);
-	}*/
+		CommonProxy.NETWORK_TO_CLIENT.sendTo(new RaceMessage(p, player), (EntityPlayerMP) player);
+	}
 	
 }

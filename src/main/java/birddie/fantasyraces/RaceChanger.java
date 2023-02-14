@@ -20,11 +20,19 @@ import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent.Visibility;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+
+/*
+ * Playable Fantasy Races
+ * 
+ * This class provides all of the racial changes for whichever selected race
+ * 
+ */
 
 public class RaceChanger {
 	
@@ -33,10 +41,9 @@ public class RaceChanger {
 	
 	
 	public static void nonRaced(EntityPlayer player) {
-		//System.out.println(player.getName() + "is NONRACED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + player.getName());
 		IRace p = player.getCapability(RaceProvider.RACE, null);
 		p.setRace(-1);
-		CommonProxy.NETWORK_TO_CLIENT.sendTo(new RaceMessage(p), (EntityPlayerMP) player);
+		CommonProxy.NETWORK_TO_CLIENT.sendTo(new RaceMessage(p, player), (EntityPlayerMP) player);
 	}
 	
 	
@@ -74,7 +81,7 @@ public class RaceChanger {
 	  
 	  //Halflings are less likely to be noticed by mobs
 	  @SubscribeEvent
-	  public void mobDetection(LivingSpawnEvent event) {
+	  public void mobDetection(Visibility event) {
 		  if(event.getEntityLiving() instanceof EntityPlayer) {
 			  //IRace p = event.getEntityLiving().getCapability(RaceProvider.RACE, null);
 			  //if(p.getRace() == 3) {
@@ -117,24 +124,28 @@ public class RaceChanger {
 	//Halflings are immune to wither
 	//Halflings are lucky
 	//Halflings are slower
-	//Event done clientside
+	//Event done clientside and serverside
 	@SubscribeEvent
 	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
 		IRace p = event.player.getCapability(RaceProvider.RACE, null);
 		if((event.player instanceof EntityPlayerMP)) {	
-			//System.out.println(event.player.getName() + " serverside race: " + p.getRace());
+			//Serverside
 			
-			//Sloppy fix, but works for now
-			//CommonProxy.NETWORK_TO_CLIENT.sendTo(new RaceMessage(p), (EntityPlayerMP) event.player);
+				if(p.getRace() > -1) {
+					CommonProxy.NETWORK_TO_CLIENT.sendToAll(new RaceMessage(p, event.player));
+				}
+			
 		}else {
-			//System.out.println(event.player.getName() + " clientside race: " + p.getRace());
+			//Clientside
 		}
 		
 		if(!(event.player instanceof EntityPlayerMP)) {	
+			if(event.player != Minecraft.getMinecraft().player){
+				//if on client side the event of the player is not the player playing
+			}
 			if(p.getRace() == -1) {
 				openGUI(event.player);
-			}else {
-				//event.player.closeScreen();
+				
 			}
 			if(event.player != null && !(event.player instanceof EntityPlayerMP)){			
 				if(event.player.getEntityWorld().playerEntities.contains(event.player)) {
@@ -195,12 +206,14 @@ public class RaceChanger {
 	}
 	
 	public void openGUI(EntityPlayer player) {
-		if(player != Minecraft.getMinecraft().player) {return;}
-		//System.out.println("Opening GUI for " + player.getName());
-		player.openGui(fantasyraces.instance, 0, player.world, (int) player.posX, (int) player.posY, (int) player.posZ);
-		IRace p = player.getCapability(RaceProvider.RACE, null);
-		p.setRace(0);
-		p.setRace(-2);
+		if(player != Minecraft.getMinecraft().player){
+			return;
+		}else {
+			player.openGui(fantasyraces.instance, 0, player.world, (int) player.posX, (int) player.posY, (int) player.posZ);
+			IRace p = player.getCapability(RaceProvider.RACE, null);
+			p.setRace(0);
+			p.setRace(-2);
+		}
 	}
 	
 	//Dwarfs break blocks under Y=60 faster
@@ -240,27 +253,22 @@ public class RaceChanger {
 		//serverside
 		IRace p = event.getEntityPlayer().getCapability(RaceProvider.RACE, null);
 		IRace q = event.getOriginal().getCapability(RaceProvider.RACE, null);
-		//System.out.println("Found player of race " + q.getRace());
 		p.setRace(q.getRace());
-		//System.out.println("New player will spawn as "+p.getRace());
-		CommonProxy.NETWORK_TO_CLIENT.sendTo(new RaceMessage(p), (EntityPlayerMP) event.getEntityPlayer());
-		//System.out.println("Cloned Player");
+		CommonProxy.NETWORK_TO_CLIENT.sendTo(new RaceMessage(p, event.getEntityPlayer()), (EntityPlayerMP) event.getEntityPlayer());
 	}
 	
 	@SubscribeEvent
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		//serverside
 		IRace p = event.player.getCapability(RaceProvider.RACE, null);
-		CommonProxy.NETWORK_TO_CLIENT.sendTo(new RaceMessage(p), (EntityPlayerMP) event.player);
-		//System.out.println(event.player.getName() + " respawned as race " + p.getRace());
+		CommonProxy.NETWORK_TO_CLIENT.sendTo(new RaceMessage(p, event.player), (EntityPlayerMP) event.player);
 	}
 	
 	@SubscribeEvent
 	public void onPlayerChangeDimension(PlayerChangedDimensionEvent event) {
 		//serverside
 		IRace p = event.player.getCapability(RaceProvider.RACE, null);
-		CommonProxy.NETWORK_TO_CLIENT.sendTo(new RaceMessage(p), (EntityPlayerMP) event.player);
-		//System.out.println(event.player.getName() + " changed dimensions as race " + p.getRace());
+		CommonProxy.NETWORK_TO_CLIENT.sendTo(new RaceMessage(p, event.player), (EntityPlayerMP) event.player);
 	}
 	
 }

@@ -11,10 +11,18 @@ import birddie.fantasyraces.race.RaceProvider;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+
+/*
+ * Playable Fantasy Races
+ * 
+ * This class contains all of the commands used in the mod.
+ * 
+ */
 
 public class CommandFantasyRaces extends CommandBase{
 	
@@ -63,12 +71,12 @@ public class CommandFantasyRaces extends CommandBase{
 			} else if("changerace".equalsIgnoreCase(args[0])) {
 				if(args.length == 1) {
 					p.setRace(-1);
-					CommonProxy.NETWORK_TO_CLIENT.sendTo(new RaceMessage(p), (EntityPlayerMP) sender.getCommandSenderEntity());
+					CommonProxy.NETWORK_TO_CLIENT.sendTo(new RaceMessage(p, (EntityPlayer) sender.getCommandSenderEntity()), (EntityPlayerMP) sender.getCommandSenderEntity());
 				}else if(args.length == 2) {
 					try {
 						if(parseInt(args[1]) == 0 || parseInt(args[1]) == 1|| parseInt(args[1]) == 2|| parseInt(args[1]) == 3) {
 							p.setRace(parseInt(args[1]));
-							CommonProxy.NETWORK_TO_CLIENT.sendTo(new RaceMessage(p), (EntityPlayerMP) sender.getCommandSenderEntity());
+							CommonProxy.NETWORK_TO_CLIENT.sendTo(new RaceMessage(p, (EntityPlayer) sender.getCommandSenderEntity()), (EntityPlayerMP) sender.getCommandSenderEntity());
 						}else {
 							sender.sendMessage(new TextComponentString("Enter a number 0-3"));
 						}

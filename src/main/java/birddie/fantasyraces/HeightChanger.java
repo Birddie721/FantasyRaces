@@ -15,6 +15,13 @@ import java.util.UUID;
 
 import com.artemis.artemislib.util.attributes.ArtemisLibAttributes;
 
+/*
+ * Playable Fantasy Races
+ * 
+ * This class changes the height of the player utilizing the Artemis Library
+ * 
+ */
+
 public class HeightChanger {
 	public final float EYE_POS = 0.9f;
 	public static UUID heightUUID = UUID.fromString("38805ce4-4fef-11ed-bdc3-0242ac120002");

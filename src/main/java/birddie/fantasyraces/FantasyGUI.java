@@ -3,7 +3,9 @@ package birddie.fantasyraces;
 import java.io.IOException;
 
 import birddie.fantasyraces.proxy.CommonProxy;
+import birddie.fantasyraces.proxy.Config;
 import birddie.fantasyraces.race.IRace;
+import birddie.fantasyraces.race.NewRaceMessage;
 import birddie.fantasyraces.race.RaceMessage;
 import birddie.fantasyraces.race.RaceProvider;
 import net.minecraft.client.Minecraft;
@@ -12,6 +14,13 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
+
+/*
+ * Playable Fantasy Races
+ * 
+ * This class creates the GUI that is used to select your race.
+ * 
+ */
 
 public class FantasyGUI extends GuiScreen{
 	
@@ -55,6 +64,7 @@ public class FantasyGUI extends GuiScreen{
 	@Override
 	protected void actionPerformed(GuiButton button) throws IOException{
 		//clientside
+		this.labelList.clear();
 		IRace p = this.player.getCapability(RaceProvider.RACE, null);
 		if (button == btnRight){
 			screen++;
@@ -63,13 +73,27 @@ public class FantasyGUI extends GuiScreen{
 			screen--;
 		}
 		if (button == btnSelect){
-			p.setRace(screen);
-			this.player.closeScreen();
+			if(screen == 0) {
+				p.setRace(screen);
+				this.player.closeScreen();
+			}else if(screen == 1 && Config.isDwarfEnabled == true) {
+				p.setRace(screen);
+				this.player.closeScreen();
+			}else if(screen == 2 && Config.isElfEnabled == true) {
+				p.setRace(screen);
+				this.player.closeScreen();
+			}else if(screen == 3 && Config.isHalflingEnabled == true) {
+				p.setRace(screen);
+				this.player.closeScreen();
+			}else {
+				this.labelList.add(fantasyRaces = new GuiLabel(fontRendererGui, 0, (this.width / 2)-150, (this.height/10 * 8), 300, 20, 0xFFFFFF));
+				fantasyRaces.setCentered();
+				fantasyRaces.addLine("This race is disabled in this mod's config");
+			}
+			
 		}
 		if (screen == 4) {screen = 0;}
 		if (screen == -1) {screen = 3;}
-		System.out.println(screen);
-		this.labelList.clear();
 		drawDefault();
 		switch(screen){
 			case 0: drawHuman();
@@ -80,7 +104,7 @@ public class FantasyGUI extends GuiScreen{
 				break;
 			case 3: drawHalfling();
 		}
-		CommonProxy.NETWORK_TO_SERVER.sendToServer(new RaceMessage(p));
+		CommonProxy.NETWORK_TO_SERVER.sendToServer(new NewRaceMessage(p));
 	}
 	
 	@Override
