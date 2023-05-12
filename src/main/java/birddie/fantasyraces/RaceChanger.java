@@ -3,6 +3,7 @@ package birddie.fantasyraces;
 import java.util.Random;
 
 import birddie.fantasyraces.proxy.CommonProxy;
+import birddie.fantasyraces.proxy.Config;
 import birddie.fantasyraces.race.IRace;
 import birddie.fantasyraces.race.RaceMessage;
 import birddie.fantasyraces.race.RaceProvider;
@@ -149,14 +150,14 @@ public class RaceChanger {
 			}
 			if(event.player != null && !(event.player instanceof EntityPlayerMP)){			
 				if(event.player.getEntityWorld().playerEntities.contains(event.player)) {
-					if(event.player.posY < 60 && p.getRace() == 1) {
+					if(event.player.posY < 60 && p.getRace() == 1 && Config.isPotionEnabled) {
 						if(event.player.dimension == 0) {
-							event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(16), 210));
+							event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(16), 210, 0, false, false));
 						}
 					}
-					if(event.player.posY > 60 && p.getRace() == 2) {
+					if(event.player.posY > 60 && p.getRace() == 2 && Config.isPotionEnabled) {
 						if(event.player.dimension == 0) {
-							event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(16), 210));
+							event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(16), 210, 0, false, false));
 						}
 					}
 					if(p.getRace() == 0) {
@@ -171,7 +172,7 @@ public class RaceChanger {
 					}
 					if(p.getRace() == 3) {
 						event.player.removePotionEffect(Potion.getPotionById(20));
-						event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(26), 20));
+						event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(26), 20, 0, false, false));
 						//event.player.capabilities.setPlayerWalkSpeed(0.08f);
 					}
 				}
@@ -179,14 +180,14 @@ public class RaceChanger {
 		}else {
 			if(event.player != null){			
 				if(event.player.getEntityWorld().playerEntities.contains(event.player)) {
-					if(event.player.posY < 60 && p.getRace() == 1) {
+					if(event.player.posY < 60 && p.getRace() == 1 && Config.isPotionEnabled) {
 						if(event.player.dimension == 0) {
-							event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(16), 210));
+							event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(16), 210, 0, false, false));
 						}
 					}
-					if(event.player.posY > 60 && p.getRace() == 2) {
+					if(event.player.posY > 60 && p.getRace() == 2 && Config.isPotionEnabled) {
 						if(event.player.dimension == 0) {
-							event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(16), 210));
+							event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(16), 210, 0, false, false));
 						}
 					}
 					if(p.getRace() == 0) {
@@ -197,8 +198,8 @@ public class RaceChanger {
 					if(p.getRace() == 2) {
 					}
 					if(p.getRace() == 3) {
-						event.player.removePotionEffect(Potion.getPotionById(20));
-						event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(26), 20));
+						event.player.removePotionEffect(Potion.getPotionById(20) );
+						if(Config.isPotionEnabled) event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(26), 20, 0, false, false));
 					}
 				}
 			}
