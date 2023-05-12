@@ -24,14 +24,15 @@ public class RaceMessage implements IMessage{
 	
 	@Override
 	public void fromBytes(ByteBuf buf) {
-		if(this.race != null) {
+		try {
+			if(this.race == null) {
+				this.race = new Race();
+			}
 			this.race.setRace(buf.readInt());
-		}else{
-			this.race = new Race();
-			this.race.setRace(buf.readInt());
+			this.player = (Minecraft.getMinecraft().world.getPlayerEntityByUUID(new UUID(buf.readLong(), buf.readLong())));
+		}catch(Exception e) {
+			System.out.println(e);
 		}
-		this.player = (Minecraft.getMinecraft().world.getPlayerEntityByUUID(new UUID(buf.readLong(), buf.readLong())));
-		
 	}
 
 	@Override
