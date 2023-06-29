@@ -5,17 +5,18 @@ import java.io.IOException;
 
 import com.google.common.io.Files;
 
-import birddie.fantasyraces.proxy.CommonProxy;
-import birddie.fantasyraces.race.IRace;
-import birddie.fantasyraces.race.RaceMessage;
-import birddie.fantasyraces.race.RaceProvider;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import birddie.fantasyraces.race.CapabilityRace;
+import birddie.fantasyraces.race.Race;
+import birddie.fantasyraces.race.RacePacket;
+import birddie.fantasyraces.race.RacePacket.RaceSyncPacket;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 /*
  * Playable Fantasy Races
@@ -28,25 +29,25 @@ public class PlayerHandler{
 	
 	@SubscribeEvent
 	public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-		loadPlayerData(event.player);
+		loadPlayerData((ServerPlayerEntity) event.getPlayer());
 	}
 	
 
 	
 	@SubscribeEvent
 	public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
-		savePlayerData(event.player);
+		savePlayerData(event.getPlayer());
 	}
 	
 	
 
-	public void savePlayerData(EntityPlayer player) {
-		IRace p = player.getCapability(RaceProvider.RACE, null);
-		World world = player.world;
+	public void savePlayerData(PlayerEntity player) {
+		Race p = player.getCapability(CapabilityRace.RACE).orElse(null);
+		World world = player.level;
 		new File("FantasyRaces").mkdirs();
-		File playerDataFile = new File("FantasyRaces/fantasyrace-" + String.valueOf(player.getUniqueID()) + String.valueOf(world.getSeed()));
-		NBTTagCompound tag = new NBTTagCompound();
-		tag.setInteger("Race", p.getRace());
+		File playerDataFile = new File("FantasyRaces/fantasyrace-" + String.valueOf(player.getUUID()) + String.valueOf(world.getServer().getWorldData().worldGenSettings().seed()));
+		CompoundNBT tag = new CompoundNBT();
+		tag.putInt("Race", p.getRace());
 		try {
 			Files.touch(playerDataFile);
 			playerDataFile.createNewFile();
@@ -57,23 +58,24 @@ public class PlayerHandler{
 		
 	}
 	
-	public void loadPlayerData(EntityPlayer player) {
+	public void loadPlayerData(ServerPlayerEntity player) {
 		//serverside
-		IRace p = player.getCapability(RaceProvider.RACE, null);
-		World world = player.world;
-		File playerDataFile = new File("FantasyRaces/fantasyrace-" + String.valueOf(player.getUniqueID()) + String.valueOf(world.getSeed()));
+		Race p = player.getCapability(CapabilityRace.RACE).orElse(null);
+		World world = player.level;
+		File playerDataFile = new File("FantasyRaces/fantasyrace-" + String.valueOf(player.getUUID()) + String.valueOf(world.getServer().getWorldData().worldGenSettings().seed()));
 		if(player != null && playerDataFile.exists()) {
 			try {
-				NBTTagCompound tag = CompressedStreamTools.read(playerDataFile);
-				p.setRace(tag.getInteger("Race"));
+				CompoundNBT tag = CompressedStreamTools.read(playerDataFile);
+				p.setRace(tag.getInt("Race"));
+				RacePacket.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new RaceSyncPacket(p.getRace(), player.getUUID()));
 			}catch(IOException e){
 				System.out.println("Error reading player data file. " + e);
 				p.setRace(-1);
 			}
 		}else {
 			p.setRace(-1);
+			RacePacket.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new RaceSyncPacket(p.getRace(), player.getUUID()));
 		}
-		CommonProxy.NETWORK_TO_CLIENT.sendTo(new RaceMessage(p, player), (EntityPlayerMP) player);
 	}
 	
 }

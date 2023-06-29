@@ -1,37 +1,35 @@
 package birddie.fantasyraces.race;
 
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.util.EnumFacing;
+import javax.annotation.Nonnull;
+
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.util.LazyOptional;
 
-public class RaceProvider implements ICapabilitySerializable<NBTBase>{
-	@CapabilityInject(IRace.class)
-	public static final Capability<IRace> RACE = null;
+public class RaceProvider implements ICapabilitySerializable<INBT>{
+
 	
-	private IRace instance = RACE.getDefaultInstance();
-
+	@Nonnull
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		return capability == RACE;
+	public <T> LazyOptional<T> getCapability(Capability<T> capability, Direction facing) {
+		if (CapabilityRace.RACE == capability) {
+			return (LazyOptional<T>)LazyOptional.of(()-> race);
+		}
+		return LazyOptional.empty();
 	}
 
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		//if (RACE != null && capability == RACE)return (T)RACE.<T> cast(this.instance);
-		//return null;
-		return capability == RACE ? RACE.<T> cast(this.instance) : null;
+	public INBT serializeNBT() {
+		return CapabilityRace.RACE.writeNBT(race, null);
 	}
 
 	@Override
-	public NBTBase serializeNBT() {
-		return RACE.getStorage().writeNBT(RACE, this.instance, null);
+	public void deserializeNBT(INBT nbt) {
+		CapabilityRace.RACE.readNBT(race, null, nbt);
 	}
-
-	@Override
-	public void deserializeNBT(NBTBase nbt) {
-		RACE.getStorage().readNBT(RACE, this.instance, null, nbt);
-	}
+	
+	private Race race = new Race();
 
 }
