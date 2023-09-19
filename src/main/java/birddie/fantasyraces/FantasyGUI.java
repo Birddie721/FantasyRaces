@@ -4,16 +4,19 @@ import java.io.IOException;
 
 import birddie.fantasyraces.proxy.CommonProxy;
 import birddie.fantasyraces.proxy.Config;
+import birddie.fantasyraces.race.AdvancementEffectMessage;
 import birddie.fantasyraces.race.IRace;
 import birddie.fantasyraces.race.NewRaceMessage;
-import birddie.fantasyraces.race.RaceMessage;
 import birddie.fantasyraces.race.RaceProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 
 /*
  * Playable Fantasy Races
@@ -75,20 +78,27 @@ public class FantasyGUI extends GuiScreen{
 		if (button == btnSelect){
 			if(screen == 0) {
 				p.setRace(screen);
+				advancementSpeed(this.player);
 				this.player.closeScreen();
+				
 			}else if(screen == 1 && Config.isDwarfEnabled == true) {
 				p.setRace(screen);
+				advancementSpeed(this.player);
 				this.player.closeScreen();
 			}else if(screen == 2 && Config.isElfEnabled == true) {
 				p.setRace(screen);
+				advancementSpeed(this.player);
 				this.player.closeScreen();
+				
 			}else if(screen == 3 && Config.isHalflingEnabled == true) {
 				p.setRace(screen);
+				advancementSpeed(this.player);
 				this.player.closeScreen();
+				
 			}else {
 				this.labelList.add(fantasyRaces = new GuiLabel(fontRendererGui, 0, (this.width / 2)-150, (this.height/10 * 8), 300, 20, 0xFFFFFF));
 				fantasyRaces.setCentered();
-				fantasyRaces.addLine("This race is disabled in this mod's config");
+				fantasyRaces.addLine(I18n.format("fantasyraces.raceDisabled"));
 			}
 			
 		}
@@ -122,16 +132,16 @@ public class FantasyGUI extends GuiScreen{
 	public void drawDefault() {
 		this.labelList.add(fantasyRaces = new GuiLabel(fontRendererGui, 0, (this.width / 2)-150, (this.height/10), 300, 20, 0xFFFFFF));
 		fantasyRaces.setCentered();
-		fantasyRaces.addLine("Select your race:");
+		fantasyRaces.addLine(I18n.format("fantasyraces.raceSelect"));
 	}
 	
 	public void drawHuman(){
 		this.labelList.add(fantasyRaces = new GuiLabel(fontRendererGui, 0, (this.width/2)-150, (2* this.height/5), 300, 20, 0xFFFFFF));
 		fantasyRaces.setCentered();
-		fantasyRaces.addLine("Human");
+		fantasyRaces.addLine(I18n.format("fantasyraces.Human.1"));
 		fantasyRaces.addLine("");
-		fantasyRaces.addLine("Default Minecraft experience");
-		fantasyRaces.addLine("No Gameplay Changes");
+		fantasyRaces.addLine(I18n.format("fantasyraces.Human.2"));
+		fantasyRaces.addLine(I18n.format("fantasyraces.Human.3"));
 		fantasyRaces.addLine("");
 		fantasyRaces.addLine("");
 		fantasyRaces.addLine("");
@@ -143,30 +153,30 @@ public class FantasyGUI extends GuiScreen{
 	public void drawDwarf(){
 		this.labelList.add(fantasyRaces = new GuiLabel(fontRendererGui, 0, (this.width/2)-150, (2* this.height/5), 300, 20, 0xFFFFFF));
 		fantasyRaces.setCentered();
-		fantasyRaces.addLine("Dwarf");
+		fantasyRaces.addLine(I18n.format("fantasyraces.Dwarf.1"));
 		fantasyRaces.addLine("");
-		fantasyRaces.addLine("Dwarves are smaller than humans, but not as small as halflings");
-		fantasyRaces.addLine("Dwarves mine faster the deeper they are");
-		fantasyRaces.addLine("Can see in the dark while underground");
-		fantasyRaces.addLine("Cannot be poisoned");
+		fantasyRaces.addLine(I18n.format("fantasyraces.Dwarf.2"));
+		fantasyRaces.addLine(I18n.format("fantasyraces.Dwarf.3"));
+		fantasyRaces.addLine(I18n.format("fantasyraces.Dwarf.4"));
+		fantasyRaces.addLine(I18n.format("fantasyraces.Dwarf.5"));
 		fantasyRaces.addLine("");
-		fantasyRaces.addLine("Hates starving");
-		fantasyRaces.addLine("Is terrible at farming");
-		fantasyRaces.addLine("Susceptible to drowning");
+		fantasyRaces.addLine(I18n.format("fantasyraces.Dwarf.6"));
+		fantasyRaces.addLine(I18n.format("fantasyraces.Dwarf.7"));
+		fantasyRaces.addLine(I18n.format("fantasyraces.Dwarf.8"));
 	}
 
 
 	public void drawElf(){
 		this.labelList.add(fantasyRaces = new GuiLabel(fontRendererGui, 0, (this.width/2)-150, (2* this.height/5), 300, 20, 0xFFFFFF));
 		fantasyRaces.setCentered();
-		fantasyRaces.addLine("Elf");
+		fantasyRaces.addLine(I18n.format("fantasyraces.Elf.1"));
 		fantasyRaces.addLine("");
-		fantasyRaces.addLine("Slightly taller than humans");
-		fantasyRaces.addLine("Can see in the dark while above ground");
-		fantasyRaces.addLine("Deals more damage with a bow");
+		fantasyRaces.addLine(I18n.format("fantasyraces.Elf.2"));
+		fantasyRaces.addLine(I18n.format("fantasyraces.Elf.3"));
+		fantasyRaces.addLine(I18n.format("fantasyraces.Elf.4"));
 		fantasyRaces.addLine("");
-		fantasyRaces.addLine("Mines slower underground");
-		fantasyRaces.addLine("Falls harder");
+		fantasyRaces.addLine(I18n.format("fantasyraces.Elf.5"));
+		fantasyRaces.addLine(I18n.format("fantasyraces.Elf.6"));
 		fantasyRaces.addLine("");
 		fantasyRaces.addLine("");
 	}
@@ -174,16 +184,21 @@ public class FantasyGUI extends GuiScreen{
 	public void drawHalfling(){
 		this.labelList.add(fantasyRaces = new GuiLabel(fontRendererGui, 0, (this.width/2)-150, (2* this.height/5), 300, 20, 0xFFFFFF));
 		fantasyRaces.setCentered();
-		fantasyRaces.addLine("Halfling");
+		fantasyRaces.addLine(I18n.format("fantasyraces.Halfling.1"));
 		fantasyRaces.addLine("");
-		fantasyRaces.addLine("About 1 block tall");
-		fantasyRaces.addLine("Lucky");
-		fantasyRaces.addLine("Can dodge monster's attacks");
-		fantasyRaces.addLine("Cannot be withered");
+		fantasyRaces.addLine(I18n.format("fantasyraces.Halfling.2"));
+		fantasyRaces.addLine(I18n.format("fantasyraces.Halfling.3"));
+		fantasyRaces.addLine(I18n.format("fantasyraces.Halfling.4"));
+		fantasyRaces.addLine(I18n.format("fantasyraces.Halfling.5"));
 		fantasyRaces.addLine("");
-		fantasyRaces.addLine("Takes more damage");
+		fantasyRaces.addLine(I18n.format("fantasyraces.Halfling.6"));
 		fantasyRaces.addLine("");
 		fantasyRaces.addLine("");
+	}
+	
+	public void advancementSpeed(EntityPlayer player) {
+		//player.addPotionEffect(new PotionEffect(Potion.getPotionById(1), 10, 0, false, false));
+		CommonProxy.ADVANCEMENT_MESSAGE.sendToServer(new AdvancementEffectMessage(player));
 	}
 	
 	

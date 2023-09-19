@@ -1,0 +1,45 @@
+#Commands
+fantasyraces.help=§b/FantasyRaces help§7 - shows this page
+fanatsyraces.changeRace=§b/FantasyRaces ChangeRace§7 - allows the player to change their race
+fantasyraces.unknownCommand=§7 Unknown Command, for more info use- §b/FantasyRaces help
+
+fantasyraces.enterNumber=Enter a number 0-3
+fantasyraces.race=Race
+
+#GUI
+fantasyraces.raceDisabled=This race is disabled in this mod's config
+fantasyraces.raceSelect=Select your race:
+
+fantasyraces.Human.1=Human
+fantasyraces.Human.2=Default Minecraft Experience
+fantasyraces.Human.3=No Gameplay Changes
+
+fantasyraces.Dwarf.1=Dwarf
+fantasyraces.Dwarf.2=Dwarves are smaller than humans, but not as small as halflings
+fantasyraces.Dwarf.3=Dwarves mine faster the deeper they are
+fantasyraces.Dwarf.4=Can see in the dark while underground
+fantasyraces.Dwarf.5=Cannot be poisoned
+fantasyraces.Dwarf.6=Takes more starving damage
+fantasyraces.Dwarf.7=Cannot use bonemeal
+fantasyraces.Dwarf.8=Drowns quicker
+
+fantasyraces.Elf.1=Elf
+fantasyraces.Elf.2=Slightly taller than humans
+fantasyraces.Elf.3=Can see in the dark while above ground
+fantasyraces.Elf.4=Deals more damage with a bow
+fantasyraces.Elf.5=Mines slower underground
+fantasyraces.Elf.6=Takes more fall damage
+
+fantasyraces.Halfling.1=Halfling
+fantasyraces.Halfling.2=About 1 block tall
+fantasyraces.Halfling.3=Lucky
+fantasyraces.Halfling.4=Can dodge monster's attacks
+fantasyraces.Halfling.5=Cannot be withered
+fantasyraces.Halfling.6=Takes increased damage
+
+#Achievements
+
+fantasyraces.Achievement.root=Fantasyraces
+fantasyraces.Achievement.root.description=Thank you for installing playable fantasy races!
+fantasyraces.Achievement=Selected Race
+fantasyraces.Achievement.desc=You selected a race!

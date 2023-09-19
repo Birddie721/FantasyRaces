@@ -9,11 +9,13 @@ import birddie.fantasyraces.handlers.GuiHandler;
 import birddie.fantasyraces.handlers.NewRaceSyncHandler;
 import birddie.fantasyraces.handlers.RaceSyncHandler;
 import birddie.fantasyraces.handlers.RegistryHandler;
+import birddie.fantasyraces.race.AdvancementEffectMessage;
 import birddie.fantasyraces.race.IRace;
 import birddie.fantasyraces.race.NewRaceMessage;
 import birddie.fantasyraces.race.Race;
 import birddie.fantasyraces.race.RaceMessage;
 import birddie.fantasyraces.race.RaceStorage;
+import birddie.fantasyraces.handlers.AdvancementMessageHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.WorldServer;
@@ -31,6 +33,7 @@ import net.minecraftforge.fml.relauncher.Side;
 public class CommonProxy {
 	public static SimpleNetworkWrapper NETWORK_TO_CLIENT;
 	public static SimpleNetworkWrapper NETWORK_TO_SERVER;
+	public static SimpleNetworkWrapper ADVANCEMENT_MESSAGE;
 	@EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
@@ -42,6 +45,8 @@ public class CommonProxy {
     	NETWORK_TO_CLIENT.registerMessage(RaceSyncHandler.class, RaceMessage.class, 1, Side.CLIENT);
     	NETWORK_TO_SERVER = NetworkRegistry.INSTANCE.newSimpleChannel(fantasyraces.MODID + "SERVER");
     	NETWORK_TO_SERVER.registerMessage(NewRaceSyncHandler.class, NewRaceMessage.class, 1, Side.SERVER);
+    	ADVANCEMENT_MESSAGE = NetworkRegistry.INSTANCE.newSimpleChannel(fantasyraces.MODID + "SERVER ADVANCEMENT");
+    	ADVANCEMENT_MESSAGE.registerMessage(AdvancementMessageHelper.class, AdvancementEffectMessage.class, 1, Side.SERVER);
     	CapabilityManager.INSTANCE.register(IRace.class, new RaceStorage(), Race::new);
     	RegistryHandler.preinitRegistries();
     }
@@ -53,6 +58,7 @@ public class CommonProxy {
         MinecraftForge.EVENT_BUS.register(new PlayerHandler());
         MinecraftForge.EVENT_BUS.register(new RaceChanger());
         MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
+
     }
     
     @EventHandler

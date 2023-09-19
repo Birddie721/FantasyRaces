@@ -1,0 +1,22 @@
+{
+    "display": {
+        "icon": {
+            "item": "minecraft:bow"
+        },
+        "title": {
+            "translate": "fantasyraces.Achievement.root"
+        },
+        "description": {
+            "translate": "fantasyraces.Achievement.root.description"
+        },
+        "background": "textures/gui/advancements/backgrounds/adventure.png",
+        "show_toast": true,
+        "announce_to_chat": false,
+        "hidden" : false
+    },
+    "criteria": {
+        "tick": {
+            "trigger": "minecraft:tick"
+        }
+    }
+}

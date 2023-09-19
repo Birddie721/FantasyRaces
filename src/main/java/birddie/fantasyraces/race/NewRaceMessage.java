@@ -1,23 +1,19 @@
 package birddie.fantasyraces.race;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class NewRaceMessage implements IMessage{
 
 	private IRace race;
-	private EntityPlayer player;
 	
 	public NewRaceMessage() {
 		this.race = null;
-		this.player = null;
 	}
 	
 	
 	public NewRaceMessage(IRace race) {
 		this.race = race;
-		this.player = null;
 	}
 	
 	

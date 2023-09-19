@@ -1,0 +1,46 @@
+# Перевод сделал K-LA (Коала as he is)
+#Commands
+fantasyraces.help=§b/FantasyRaces help§7 - показывает эту страницу
+fanatsyraces.changeRace=§b/FantasyRaces ChangeRace§7 - даёт поменять расу игрока
+fantasyraces.unknownCommand=§7 Unknown Command, for more info use- §b/FantasyRaces help
+
+fantasyraces.enterNumber=Введите цифру от 1 до 3
+fantasyraces.race=Раса
+
+#GUI
+fantasyraces.raceDisabled=Эта раса отключена в конфиге.
+fantasyraces.raceSelect=Выберите расу:
+
+fantasyraces.Human.1=Человек
+fantasyraces.Human.2=Стандартный геймплей Minecraft
+fantasyraces.Human.3=Никаких изменений
+
+fantasyraces.Dwarf.1=Дворф
+fantasyraces.Dwarf.2=Дворфы ниже людей, но выше полуросликов
+fantasyraces.Dwarf.3=Чем глубже дворф, тем быстрее он копает
+fantasyraces.Dwarf.4=Под землёй он может видеть в темноте
+fantasyraces.Dwarf.5=Устойчив к ядам
+fantasyraces.Dwarf.6=Сильнее страдает от голодания
+fantasyraces.Dwarf.7=Не умеет пользоваться костной мукой
+fantasyraces.Dwarf.8=Быстрее тонет
+
+fantasyraces.Elf.1=Эльф
+fantasyraces.Elf.2=Слегка выше людей
+fantasyraces.Elf.3=Могут видеть в темноте на поверхности
+fantasyraces.Elf.4=Наносят больше урона луком
+fantasyraces.Elf.5=Медленнее копает под землёй
+fantasyraces.Elf.6=Получает больше урона от падения
+
+fantasyraces.Halfling.1=Полурослик
+fantasyraces.Halfling.2=В высоту около 1-го блока
+fantasyraces.Halfling.3=Везучий
+fantasyraces.Halfling.4=Может уклониться от атаки
+fantasyraces.Halfling.5=Устойчив к иссушению
+fantasyraces.Halfling.6=Получает больше урона
+
+#Achievements
+
+fantasyraces.Achievement.root=Fantasyraces
+fantasyraces.Achievement.root.description=Спасибо за установку Fantasyraces!
+fantasyraces.Achievement=Выбор расы
+fantasyraces.Achievement.desc=Ты выбрал расу!

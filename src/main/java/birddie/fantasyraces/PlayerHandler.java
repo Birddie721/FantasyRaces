@@ -2,7 +2,6 @@ package birddie.fantasyraces;
 
 import java.io.File;
 import java.io.IOException;
-
 import com.google.common.io.Files;
 
 import birddie.fantasyraces.proxy.CommonProxy;
@@ -25,6 +24,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
  */
 
 public class PlayerHandler{
+	
 	
 	@SubscribeEvent
 	public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {

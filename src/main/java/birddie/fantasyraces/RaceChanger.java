@@ -1,6 +1,10 @@
 package birddie.fantasyraces;
 
 import java.util.Random;
+import java.util.UUID;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 import birddie.fantasyraces.proxy.CommonProxy;
 import birddie.fantasyraces.proxy.Config;
@@ -9,16 +13,16 @@ import birddie.fantasyraces.race.RaceMessage;
 import birddie.fantasyraces.race.RaceProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemAxe;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.Visibility;
@@ -37,9 +41,12 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class RaceChanger {
 	
+	public static final UUID HEALTH_MODIFIER_ID = UUID.fromString("f47ac10b-58cc-4372-a567-0e02b2c3d479");
+	public static final UUID SPEED_MODIFIER_ID = UUID.fromString("625f8d0c-5af6-4c46-88bf-ec370f1e30a1");
+	public static final UUID LUCK_MODIFIER_ID = UUID.fromString("a726d61f-8b39-4f56-a23a-1c3b8ac73428");
+	
 	double dodgeChance = .4;
 	boolean dodged = false;
-	
 	
 	public static void nonRaced(EntityPlayer player) {
 		IRace p = player.getCapability(RaceProvider.RACE, null);
@@ -60,23 +67,24 @@ public class RaceChanger {
 			}
 		  IRace p = event.getEntityLiving().getCapability(RaceProvider.RACE, null);
 		  Random rand = new Random();
+		  dodgeChance = Config.halflingDodgeChance;
 		  if(dodgeChance >= rand.nextDouble() && p.getRace() == 3) {
 				event.setCanceled(true);
 				dodged = true;
-		  }else if(event.getSource().isMagicDamage() && p.getRace() == 1) {
+		  }else if(event.getSource().isMagicDamage() && p.getRace() == 1 && Config.dwarfPoisonImmunity) {
 				event.setCanceled(true);
 				dodged = true;
-		  }else if(event.getSource() == DamageSource.WITHER && p.getRace() == 3) {
+		  }else if(event.getSource() == DamageSource.WITHER && p.getRace() == 3  && Config.halflingWitherImmunity) {
 				event.setCanceled(true);
 				dodged = true;
 		  }else if(p.getRace() == 3) {
-			  	event.setAmount(event.getAmount() * 1.5F);
+			  	event.setAmount(event.getAmount() * Config.halflingDamageMultiplier);
 		  }else if((p.getRace() == 2 || p.getRace() == 1) && event.getSource() == DamageSource.FALL) {
-			  	event.setAmount(event.getAmount() * 1.5F);
+			  	event.setAmount(event.getAmount() * Config.elfFallDamage);
 		  }else if(p.getRace() == 1 && event.getSource() == DamageSource.STARVE) {
-			  	event.setAmount(event.getAmount() * 2F);
+			  	event.setAmount(event.getAmount() * Config.dwarfHungerDamage);
 		  }else if(p.getRace() == 1 && event.getSource() == DamageSource.DROWN) {
-			  	event.setAmount(event.getAmount() * 2F);
+			  	event.setAmount(event.getAmount() * Config.dwarfDrownDamage);
 		  }
 	  }
 	  
@@ -99,8 +107,12 @@ public class RaceChanger {
 			  IRace p = source.getTrueSource().getCapability(RaceProvider.RACE, null);
 			  if(p.getRace() == 2) {
 				  if (source.isProjectile()) {
-					  event.setAmount(event.getAmount() * 1.25f);
+					  event.setAmount(event.getAmount() * Config.elfExtraBowDamage);
 				  }
+			  }else if(p.getRace() == 1) {
+					if(event.getEntityLiving().getHeldItemMainhand().getItem() instanceof ItemAxe) {
+						event.setAmount(event.getAmount() * Config.dwarfExtraAxeDamage);
+					}
 			  }
 		  }
 	  }
@@ -129,6 +141,7 @@ public class RaceChanger {
 	@SubscribeEvent
 	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
 		IRace p = event.player.getCapability(RaceProvider.RACE, null);
+		onSelectRaceAttributes(event.player);
 		if((event.player instanceof EntityPlayerMP)) {	
 			//Serverside
 			
@@ -138,7 +151,9 @@ public class RaceChanger {
 			
 		}else {
 			//Clientside
+			
 		}
+		
 		
 		if(!(event.player instanceof EntityPlayerMP)) {	
 			if(event.player != Minecraft.getMinecraft().player){
@@ -150,56 +165,50 @@ public class RaceChanger {
 			}
 			if(event.player != null && !(event.player instanceof EntityPlayerMP)){			
 				if(event.player.getEntityWorld().playerEntities.contains(event.player)) {
-					if(event.player.posY < 60 && p.getRace() == 1 && Config.isPotionEnabled) {
+					if(event.player.posY < 60 && p.getRace() == 1 && Config.dwarfNightVision) {
 						if(event.player.dimension == 0) {
 							event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(16), 210, 0, false, false));
 						}
 					}
-					if(event.player.posY > 60 && p.getRace() == 2 && Config.isPotionEnabled) {
+					if(event.player.posY > 60 && p.getRace() == 2 && Config.elfNightVision) {
 						if(event.player.dimension == 0) {
 							event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(16), 210, 0, false, false));
 						}
 					}
 					if(p.getRace() == 0) {
-						//event.player.capabilities.setPlayerWalkSpeed(0.1f);
 					}
-					if(p.getRace() == 1) {
+					if(p.getRace() == 1 && Config.dwarfPoisonImmunity) {
 						event.player.removePotionEffect(Potion.getPotionById(19));
-						//event.player.capabilities.setPlayerWalkSpeed(0.08f);
 					}
 					if(p.getRace() == 2) {
-						//event.player.capabilities.setPlayerWalkSpeed(0.12f);
 					}
-					if(p.getRace() == 3) {
+					if(p.getRace() == 3 && Config.halflingWitherImmunity) {
 						event.player.removePotionEffect(Potion.getPotionById(20));
-						event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(26), 20, 0, false, false));
-						//event.player.capabilities.setPlayerWalkSpeed(0.08f);
 					}
 				}
 			}	
 		}else {
 			if(event.player != null){			
 				if(event.player.getEntityWorld().playerEntities.contains(event.player)) {
-					if(event.player.posY < 60 && p.getRace() == 1 && Config.isPotionEnabled) {
+					if(event.player.posY < 60 && p.getRace() == 1 && Config.dwarfNightVision) {
 						if(event.player.dimension == 0) {
 							event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(16), 210, 0, false, false));
 						}
 					}
-					if(event.player.posY > 60 && p.getRace() == 2 && Config.isPotionEnabled) {
+					if(event.player.posY > 60 && p.getRace() == 2 && Config.elfNightVision) {
 						if(event.player.dimension == 0) {
 							event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(16), 210, 0, false, false));
 						}
 					}
 					if(p.getRace() == 0) {
 					}
-					if(p.getRace() == 1) {
+					if(p.getRace() == 1 && Config.dwarfPoisonImmunity) {
 						event.player.removePotionEffect(Potion.getPotionById(19));
 					}
 					if(p.getRace() == 2) {
 					}
-					if(p.getRace() == 3) {
+					if(p.getRace() == 3 && Config.halflingWitherImmunity) {
 						event.player.removePotionEffect(Potion.getPotionById(20) );
-						if(Config.isPotionEnabled) event.player.addPotionEffect(new PotionEffect(Potion.getPotionById(26), 20, 0, false, false));
 					}
 				}
 			}
@@ -230,10 +239,10 @@ public class RaceChanger {
 		IRace p = event.getEntityLiving().getCapability(RaceProvider.RACE, null);
 		EntityPlayer player = event.getEntityPlayer();
 		if(p.getRace() == 1 && player.posY < 60 ) {
-			event.setNewSpeed((float) (event.getOriginalSpeed() * (1.7F + ((60 - player.posY)/50))));
+			event.setNewSpeed((float) (event.getOriginalSpeed() * (Config.dwarfExtraMiningSpeed + ((60 - player.posY)/50))));
 		}
 		if(p.getRace() == 2 && player.posY < 60 ) {
-			event.setNewSpeed(event.getOriginalSpeed() * 0.8F);
+			event.setNewSpeed(event.getOriginalSpeed() * Config.elfMiningSpeed);
 		}
 	}
 	
@@ -244,7 +253,7 @@ public class RaceChanger {
 			return;
 		}
 		IRace p = event.getEntityLiving().getCapability(RaceProvider.RACE, null);
-		if(p.getRace() == 1) {
+		if(p.getRace() == 1 && (Config.dwarfBonemeal==false)) {
 			event.setCanceled(true);
 		}
 	}
@@ -271,5 +280,21 @@ public class RaceChanger {
 		IRace p = event.player.getCapability(RaceProvider.RACE, null);
 		CommonProxy.NETWORK_TO_CLIENT.sendTo(new RaceMessage(p, event.player), (EntityPlayerMP) event.player);
 	}
+	
+	public void onSelectRaceAttributes(EntityPlayer player){
+		Double speed = player.getAttributeMap().getAttributeInstance(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue();
+		Multimap<String, AttributeModifier> multimap = HashMultimap.<String, AttributeModifier>create();
+		IRace p = player.getCapability(RaceProvider.RACE, null);
+		
+		AttributeModifier healthModifier = new AttributeModifier(HEALTH_MODIFIER_ID, "Health Mod",p.getRace()==1?Config.dwarfExtraHearts:0.0, 0);
+		AttributeModifier speedModifier = new AttributeModifier(SPEED_MODIFIER_ID, "Speed Mod",(speed*(p.getRace()==2?Config.elfMovementSpeed:1.0))-speed, 0);
+		AttributeModifier luckModifier = new AttributeModifier(LUCK_MODIFIER_ID, "Luck Mod",(p.getRace()==3?Config.halflingLuck:0),0);
+		
+		multimap.put(SharedMonsterAttributes.MAX_HEALTH.getName(), healthModifier);
+		multimap.put(SharedMonsterAttributes.MOVEMENT_SPEED.getName(), speedModifier);
+		multimap.put(SharedMonsterAttributes.LUCK.getName(), luckModifier);
+		player.getAttributeMap().applyAttributeModifiers(multimap);
+	}
+	
 	
 }

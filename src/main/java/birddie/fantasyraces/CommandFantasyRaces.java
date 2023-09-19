@@ -8,6 +8,7 @@ import birddie.fantasyraces.proxy.CommonProxy;
 import birddie.fantasyraces.race.IRace;
 import birddie.fantasyraces.race.RaceMessage;
 import birddie.fantasyraces.race.RaceProvider;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -78,24 +79,24 @@ public class CommandFantasyRaces extends CommandBase{
 							p.setRace(parseInt(args[1]));
 							CommonProxy.NETWORK_TO_CLIENT.sendTo(new RaceMessage(p, (EntityPlayer) sender.getCommandSenderEntity()), (EntityPlayerMP) sender.getCommandSenderEntity());
 						}else {
-							sender.sendMessage(new TextComponentString("Enter a number 0-3"));
+							sender.sendMessage(new TextComponentString(I18n.format("fantasyraces.enterNumber")));
 						}
 					}catch(Exception e){
-						sender.sendMessage(new TextComponentString("Enter a number 0-3"));
+						sender.sendMessage(new TextComponentString(I18n.format("fantasyraces.enterNumber")));
 					}
 				}
 			}else if("race".equalsIgnoreCase(args[0])){
 				if(args.length == 1) {
-					sender.sendMessage(new TextComponentString("Race = " + sender.getCommandSenderEntity().getCapability(RaceProvider.RACE, null).getRace()));
+					sender.sendMessage(new TextComponentString(I18n.format("fantasyraces.race") + " = " + sender.getCommandSenderEntity().getCapability(RaceProvider.RACE, null).getRace()));
 				}
 			}else {
-				sender.sendMessage(new TextComponentString("§7 Unknown Command, for mode info use- §b/FantasyRaces help"));
+				sender.sendMessage(new TextComponentString(I18n.format("fantasyraces.unknownCommand")));
 			}
 		}
 	}
 	
 	public void displayHelp(ICommandSender sender) {
-		sender.sendMessage(new TextComponentString("§b/FantasyRaces help§7 - shows this page"));
-		sender.sendMessage(new TextComponentString("§b/FantasyRaces ChangeRace§7 - allows the player to change their race"));
+		sender.sendMessage(new TextComponentString(I18n.format("fantasyraces.help")));
+		sender.sendMessage(new TextComponentString(I18n.format("fanatsyraces.changeRace")));
 	}
 }

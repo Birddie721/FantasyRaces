@@ -1,0 +1,22 @@
+{
+    "display": {
+        "icon": {
+            "item": "minecraft:iron_axe"
+        },
+        "title": {
+            "translate": "fantasyraces.Achievement"
+        },
+        "description": {
+            "translate": "fantasyraces.Achievement.desc"
+        },
+        "announce_to_chat": true,
+        "show_toast": true,
+        "hidden": false
+    },
+    "parent": "fantasyraces:fantasyraces/root",
+    "criteria": {
+        "changed_race": {
+            "trigger": "minecraft:effects_changed"
+        }
+    }
+}
